@@ -1,5 +1,6 @@
 scriptencoding utf-8
 
+let thinkingWindow
 let s:has_nvim_ghost_text = has('nvim-0.7') && exists('*nvim_buf_get_mark')
 let s:vim_minimum_version = '9.0.0185'
 let s:has_vim_ghost_text = has('patch-' . s:vim_minimum_version) && has('textprop')
@@ -320,6 +321,7 @@ function! s:UpdatePreview() abort
     endif
     if empty(text) || !s:has_ghost_text
       "call s:Echo('Done')"
+      vim.api.nvim_win_close(thinkingWindow, true)
       return s:ClearPreview()
     endif
     if exists('b:_copilot.cycling_callbacks')
@@ -423,6 +425,30 @@ function! copilot#Schedule() abort
     return
   endif
   "call s:Echo('Copilot Thinking ' . "\uF1E6")"
+
+  local buf = vim.api.nvim_create_buf(false, true)
+
+  -- Set the buffer content to the desired icon or text
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { " 🔍" })
+
+  -- Get the current editor dimensions
+  local width = vim.api.nvim_get_option("columns")
+  local height = vim.api.nvim_get_option("lines")
+
+  -- Calculate the position for the top right corner
+  local win_opts = {
+    relative = "editor",
+    width = 3,
+    height = 1,
+    col = 0,
+    row = height - 2,
+    style = "minimal",
+    border = "none",
+  }
+
+  thinkingWindow = vim.api.nvim_open_win(buf, false, win_opts)
+
+
   call s:UpdatePreview()
   let delay = get(g:, 'copilot_idle_delay', 45)
   call timer_stop(get(g:, '_copilot_timer', -1))
