@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-let thinkingWindow
+"let thinkingWindow"
 let s:has_nvim_ghost_text = has('nvim-0.7') && exists('*nvim_buf_get_mark')
 let s:vim_minimum_version = '9.0.0185'
 let s:has_vim_ghost_text = has('patch-' . s:vim_minimum_version) && has('textprop')
@@ -321,11 +321,11 @@ function! s:UpdatePreview() abort
     endif
     if empty(text) || !s:has_ghost_text
       "call s:Echo('Done')"
-      if has('nvim')
+      "if has('nvim')
         call nvim_win_close(thinkingWindow, v:true)
       else
         call win_execute(thinkingWindow, 'close')
-      endif
+      endif"
       return s:ClearPreview()
     endif
     if exists('b:_copilot.cycling_callbacks')
@@ -430,7 +430,7 @@ function! copilot#Schedule() abort
   endif
   "call s:Echo('Copilot Thinking ' . "\uF1E6")"
 
-  let buf = nvim_create_buf(v:false, v:true)
+  "let buf = nvim_create_buf(v:false, v:true)
 
   " Set the buffer content to the desired icon or text
   call nvim_buf_set_lines(buf, 0, -1, v:false, [' 🔍'])
@@ -450,7 +450,7 @@ function! copilot#Schedule() abort
         \ 'border': 'none',
         \ }
 
-  let thinkingWindow = nvim_open_win(buf, v:false, win_opts)
+  let thinkingWindow = nvim_open_win(buf, v:false, win_opts)"
 
 
   call s:UpdatePreview()
