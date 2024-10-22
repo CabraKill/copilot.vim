@@ -321,7 +321,11 @@ function! s:UpdatePreview() abort
     endif
     if empty(text) || !s:has_ghost_text
       "call s:Echo('Done')"
-      vim.api.nvim_win_close(thinkingWindow, true)
+      if has('nvim')
+        call nvim_win_close(thinkingWindow, v:true)
+      else
+        call win_execute(thinkingWindow, 'close')
+      endif
       return s:ClearPreview()
     endif
     if exists('b:_copilot.cycling_callbacks')
@@ -426,27 +430,27 @@ function! copilot#Schedule() abort
   endif
   "call s:Echo('Copilot Thinking ' . "\uF1E6")"
 
-  local buf = vim.api.nvim_create_buf(false, true)
+  let buf = nvim_create_buf(v:false, v:true)
 
-  -- Set the buffer content to the desired icon or text
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { " 🔍" })
+  " Set the buffer content to the desired icon or text
+  call nvim_buf_set_lines(buf, 0, -1, v:false, [' 🔍'])
 
-  -- Get the current editor dimensions
-  local width = vim.api.nvim_get_option("columns")
-  local height = vim.api.nvim_get_option("lines")
+  " Get the current editor dimensions
+  let width = &columns
+  let height = &lines
 
-  -- Calculate the position for the top right corner
-  local win_opts = {
-    relative = "editor",
-    width = 3,
-    height = 1,
-    col = 0,
-    row = height - 2,
-    style = "minimal",
-    border = "none",
-  }
+  " Calculate the position for the top right corner
+  let win_opts = {
+        \ 'relative': 'editor',
+        \ 'width': 3,
+        \ 'height': 1,
+        \ 'col': 0,
+        \ 'row': height - 2,
+        \ 'style': 'minimal',
+        \ 'border': 'none',
+        \ }
 
-  thinkingWindow = vim.api.nvim_open_win(buf, false, win_opts)
+  let thinkingWindow = nvim_open_win(buf, v:false, win_opts)
 
 
   call s:UpdatePreview()
