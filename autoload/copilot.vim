@@ -319,6 +319,7 @@ function! s:UpdatePreview() abort
       call remove(text, -1)
     endif
     if empty(text) || !s:has_ghost_text
+      call s:Echo('Done')
       return s:ClearPreview()
     endif
     if exists('b:_copilot.cycling_callbacks')
