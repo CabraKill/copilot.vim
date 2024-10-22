@@ -421,6 +421,7 @@ function! copilot#Schedule() abort
     call copilot#Clear()
     return
   endif
+  call s:Echo('Copilot Thinking ' . "\uF1E6")
   call s:UpdatePreview()
   let delay = get(g:, 'copilot_idle_delay', 45)
   call timer_stop(get(g:, '_copilot_timer', -1))
